@@ -128,6 +128,9 @@ function demoBuild(count: number, onEvent: Handler): () => void {
         await sleep(stepMs);
         if (cancelled) return;
         const current = Math.min(i, total);
+        const throttled = Boolean(
+          mid && current >= mid.at && current < mid.at + stride * 3,
+        );
         onEvent({
           type: "stage",
           stage: {
@@ -135,14 +138,11 @@ function demoBuild(count: number, onEvent: Handler): () => void {
             status: "active",
             current,
             total,
-            note: mid && current >= mid.at && current < mid.at + stride * 3
-              ? mid.note
-              : undefined,
-            warning: Boolean(
-              mid && current >= mid.at && current < mid.at + stride * 3,
-            ),
+            note: throttled && mid ? mid.note : "",
+            warning: throttled,
           },
         });
+
       }
       onEvent({
         type: "stage",
