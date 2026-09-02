@@ -1,24 +1,55 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { ChatView } from "@/components/ChatView";
+import { CorpusBuilder } from "@/components/CorpusBuilder";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Research Paper Agent — Corpus Chat with Visible Reasoning" },
+      {
+        name: "description",
+        content:
+          "Chat with an arXiv paper corpus and watch the real LangGraph reasoning trace, plus build the corpus from the UI with live ingestion progress.",
+      },
+      {
+        property: "og:title",
+        content: "Research Paper Agent — Corpus Chat with Visible Reasoning",
+      },
+      {
+        property: "og:description",
+        content:
+          "Query your paper corpus and see the agent's real node-by-node thought process, from planning to citation traversal to verification.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const [builderOpen, setBuilderOpen] = useState(false);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="flex h-screen flex-col bg-background">
+      <header className="flex shrink-0 items-center gap-3 border-b border-border px-5 py-3">
+        <div className="mx-auto flex w-full max-w-3xl items-center gap-3">
+          <span className="size-2 rounded-full bg-accent" aria-hidden />
+          <h1 className="flex-1 text-sm font-semibold tracking-tight">
+            Research Paper Agent
+          </h1>
+          <button
+            onClick={() => setBuilderOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-accent/50 px-3 py-1.5 text-xs font-medium text-accent transition-colors hover:bg-accent/10"
+          >
+            <Plus className="size-3.5" />
+            Build Corpus
+          </button>
+        </div>
+      </header>
+
+      <ChatView />
+      <CorpusBuilder open={builderOpen} onClose={() => setBuilderOpen(false)} />
     </div>
   );
 }
